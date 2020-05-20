@@ -14,7 +14,8 @@ namespace MaterialDesignColors.WpfExample
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow : Window
+    {
         public static Snackbar Snackbar;
         public MainWindow()
         {
@@ -33,7 +34,7 @@ namespace MaterialDesignColors.WpfExample
             DataContext = new MainWindowViewModel(MainSnackbar.MessageQueue);
 
             Snackbar = this.MainSnackbar;
-        }        
+        }
 
         private void UIElement_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
@@ -52,10 +53,10 @@ namespace MaterialDesignColors.WpfExample
         {
             var sampleMessageDialog = new SampleMessageDialog
             {
-                Message = {Text = ((ButtonBase) sender).Content.ToString()}
+                Message = { Text = ((ButtonBase)sender).Content.ToString() }
             };
 
-            await DialogHost.Show(sampleMessageDialog, "RootDialog");            
+            await DialogHost.Show(sampleMessageDialog, "RootDialog");
         }
 
         private void OnCopy(object sender, ExecutedRoutedEventArgs e)
@@ -72,5 +73,25 @@ namespace MaterialDesignColors.WpfExample
                 }
             }
         }
-    } 
+
+        private void MenuToggleButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            DemoItemsSearchBox.Focus();
+        }
+
+        private void MenuDarkModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            ModifyTheme(theme => theme.SetBaseTheme(DarkModeToggleButton.IsChecked == true ? Theme.Dark : Theme.Light));
+        }
+
+        private static void ModifyTheme(Action<ITheme> modificationAction)
+        {
+            PaletteHelper paletteHelper = new PaletteHelper();
+            ITheme theme = paletteHelper.GetTheme();
+
+            modificationAction?.Invoke(theme);
+
+            paletteHelper.SetTheme(theme);
+        }
+    }
 }

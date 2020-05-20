@@ -8,22 +8,25 @@ namespace MaterialDesignThemes.Wpf
     /// </summary>
     public class DialogSession
     {
-        private readonly DialogHost _owner;    
+        private readonly DialogHost _owner;
 
         internal DialogSession(DialogHost owner)
         {
-            if (owner == null) throw new ArgumentNullException(nameof(owner));
-
-            _owner = owner;
+            _owner = owner ?? throw new ArgumentNullException(nameof(owner));
         }
 
         /// <summary>
         /// Indicates if the dialog session has ended.  Once ended no further method calls will be permitted.
         /// </summary>
         /// <remarks>
-        /// Client code cannot set this directly, this is internally managed.  To end the dicalog session use <see cref="Close()"/>.
+        /// Client code cannot set this directly, this is internally managed.  To end the dialog session use <see cref="Close()"/>.
         /// </remarks>
         public bool IsEnded { get; internal set; }
+        
+        /// <summary>
+        /// The parameter passed to the <see cref="DialogHost.CloseDialogCommand" /> and return by <see cref="DialogHost.Show(object)"/>
+        /// </summary>
+        internal object CloseParameter { get; set; }
 
         /// <summary>
         /// Gets the <see cref="DialogHost.DialogContent"/> which is currently displayed, so this could be a view model or a UI element.
@@ -31,7 +34,7 @@ namespace MaterialDesignThemes.Wpf
         public object Content => _owner.DialogContent;
 
         /// <summary>
-        /// Update the currrent content in the dialog.
+        /// Update the current content in the dialog.
         /// </summary>
         /// <param name="content"></param>
         public void UpdateContent(object content)

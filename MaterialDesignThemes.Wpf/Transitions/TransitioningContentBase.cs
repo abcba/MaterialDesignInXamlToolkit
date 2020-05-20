@@ -23,8 +23,6 @@ namespace MaterialDesignThemes.Wpf.Transitions
         private SkewTransform _skewTransform;
         private TranslateTransform _translateTransform;
 
-        private bool _isOpeningEffectPending;
-
         static TransitioningContentBase()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TransitioningContentBase), new FrameworkPropertyMetadata(typeof(TransitioningContentBase)));
@@ -110,10 +108,8 @@ namespace MaterialDesignThemes.Wpf.Transitions
         {
             if (!IsLoaded || _matrixTransform == null)
             {
-                _isOpeningEffectPending = true;
                 return;
             }
-            _isOpeningEffectPending = false;
 
             var storyboard = new Storyboard();
             var openingEffect = OpeningEffect?.Build(this);
@@ -131,7 +127,7 @@ namespace MaterialDesignThemes.Wpf.Transitions
         {
             //https://github.com/ButchersBoy/MaterialDesignInXamlToolkit/issues/950
             //Only set the NameScope if the child does not already have a TemplateNameScope set
-            if (GetVisualChild(0) is FrameworkElement fe && NameScope.GetNameScope(fe) != null)
+            if (VisualChildrenCount > 0 && GetVisualChild(0) is FrameworkElement fe && NameScope.GetNameScope(fe) != null)
             {
                 return fe;
             }

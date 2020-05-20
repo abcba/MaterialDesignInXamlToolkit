@@ -121,14 +121,20 @@ namespace MaterialDesignThemes.Wpf.Transitions
         {
             if (AutoApplyTransitionOrigins)
                 _nextTransitionOrigin = GetNavigationSourcePoint(executedRoutedEventArgs);
-            SetCurrentValue(SelectedIndexProperty, Math.Min(Items.Count - 1, SelectedIndex + 1));
+            var slides = 1;
+            if (executedRoutedEventArgs.Parameter is int && (int)executedRoutedEventArgs.Parameter > 0)
+                slides = (int)executedRoutedEventArgs.Parameter;
+            SetCurrentValue(SelectedIndexProperty, Math.Min(Items.Count - 1, SelectedIndex + slides));
         }
 
         private void MovePreviousHandler(object sender, ExecutedRoutedEventArgs executedRoutedEventArgs)
         {
             if (AutoApplyTransitionOrigins)
                 _nextTransitionOrigin = GetNavigationSourcePoint(executedRoutedEventArgs);
-            SetCurrentValue(SelectedIndexProperty, Math.Max(0, SelectedIndex - 1));
+            var slides = 1;
+            if (executedRoutedEventArgs.Parameter is int && (int)executedRoutedEventArgs.Parameter > 0)
+                slides = (int)executedRoutedEventArgs.Parameter;
+            SetCurrentValue(SelectedIndexProperty, Math.Max(0, SelectedIndex - slides));
         }
 
         private void MoveFirstHandler(object sender, ExecutedRoutedEventArgs executedRoutedEventArgs)
@@ -157,9 +163,9 @@ namespace MaterialDesignThemes.Wpf.Transitions
             return transitionOrigin;
         }
 
-        private static bool IsSafePositive(double dubz)
+        private static bool IsSafePositive(double @double)
         {
-            return !double.IsNaN(dubz) && !double.IsInfinity(dubz) && dubz > 0.0;
+            return !double.IsNaN(@double) && !double.IsInfinity(@double) && @double > 0.0;
         }
 
         private TransitionerSlide GetSlide(object item)
@@ -178,6 +184,7 @@ namespace MaterialDesignThemes.Wpf.Transitions
             for (var index = 0; index < Items.Count; index++)
             {
                 var slide = GetSlide(Items[index]);
+                if (slide == null) continue;
                 if (index == selectedIndex)
                 {
                     newSlide = slide;

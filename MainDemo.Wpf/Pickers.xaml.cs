@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
@@ -21,12 +22,14 @@ namespace MaterialDesignColors.WpfExample
 
         private void LocaleCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            try {
-                var lang = System.Windows.Markup.XmlLanguage.GetLanguage((string) LocaleCombo.SelectedItem);
+            try
+            {
+                var lang = System.Windows.Markup.XmlLanguage.GetLanguage((string)LocaleCombo.SelectedItem);
                 LocaleDatePicker.Language = lang;
                 LocaleDatePickerRTL.Language = lang;
             }
-            catch {
+            catch
+            {
                 LocaleCombo.SelectedItem = "fr-CA";
             }
             //HACK: The calendar only refresh when we change the date
@@ -66,13 +69,37 @@ namespace MaterialDesignColors.WpfExample
 
         public void ClockDialogOpenedEventHandler(object sender, DialogOpenedEventArgs eventArgs)
         {
-            Clock.Time = ((PickersViewModel) DataContext).Time;
+            Clock.Time = ((PickersViewModel)DataContext).Time;
         }
 
         public void ClockDialogClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
         {
             if (Equals(eventArgs.Parameter, "1"))
                 ((PickersViewModel)DataContext).Time = Clock.Time;
+        }
+
+        private void PresetTimePicker_SelectedTimeChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<System.DateTime?> e)
+        {
+            var oldValue = e.OldValue.HasValue ? e.OldValue.Value.ToLongTimeString() : "NULL";
+            var newValue = e.NewValue.HasValue ? e.NewValue.Value.ToLongTimeString() : "NULL";
+
+            Debug.WriteLine($"PresentTimePicker's SelectedTime changed from {oldValue} to {newValue}");
+        }
+
+        public void CombinedDialogOpenedEventHandler(object sender, DialogOpenedEventArgs eventArgs)
+        {
+            CombinedCalendar.SelectedDate = ((PickersViewModel)DataContext).Date;
+            CombinedClock.Time = ((PickersViewModel)DataContext).Time;
+        }
+
+        public void CombinedDialogClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+        {
+            if (Equals(eventArgs.Parameter, "1"))
+            {
+                var combined = CombinedCalendar.SelectedDate.Value.AddSeconds(CombinedClock.Time.TimeOfDay.TotalSeconds);
+                ((PickersViewModel)DataContext).Time = combined;
+                ((PickersViewModel)DataContext).Date = combined;
+            }
         }
     }
 }
